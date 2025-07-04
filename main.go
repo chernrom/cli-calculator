@@ -40,6 +40,10 @@ func main() {
 			fmt.Println("выберите действие(+, -, * или /)")
 			fmt.Scanln(&op)
 
+			if op == "exit" {
+				return
+			}
+
 			if op != "+" && op != "-" && op != "*" && op != "/" {
 				fmt.Println("Неверный знак. Выберите из +, -, *, /")
 				continue
@@ -76,5 +80,8 @@ func main() {
 		}
 		fmt.Printf("Ответ: %.2f\n", result)
 		fmt.Println("-----------------")
+
+		continue
 	}
+
 }
