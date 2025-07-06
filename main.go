@@ -8,80 +8,107 @@ import (
 
 func main() {
 
+	var op string
+	var result float64
+
+	fmt.Println("Это калькулятор")
+	fmt.Println("Пока он может выполнять только простейшие функции")
+	time.Sleep(1500 * time.Millisecond)
+	fmt.Println("Если захотите выйти - введите exit вместо числа")
+	fmt.Println("Можем начинать!")
+	fmt.Println("-----------------")
+	time.Sleep(1500 * time.Millisecond)
+
+	a, err := readNumber("Введите первое число:")
+	if err != nil {
+		if err.Error() == "exit" {
+			return
+		}
+		fmt.Println(err)
+		return
+	}
+
+	op, err = readOperator("Выберите действие (+, -, *, /):")
+	if err != nil {
+		if err.Error() == "exit" {
+			return
+		}
+		fmt.Println(err)
+		return
+	}
+
+	b, err := readNumber("Введите второе число:")
+	if err != nil {
+		if err.Error() == "exit" {
+
+		}
+		fmt.Println(err)
+		return
+	}
+
+	result, err = calculate(a, b, op)
+	if err != nil {
+		fmt.Println("Ошибка:", err)
+		return
+	}
+
+	fmt.Printf("Ответ: %.2f\n", result)
+	fmt.Println("------")
+
+}
+
+func calculate(a float64, b float64, operator string) (float64, error) {
+	switch operator {
+	case "+":
+		return a + b, nil
+	case "-":
+		return a - b, nil
+	case "*":
+		return a * b, nil
+	case "/":
+		if b == 0 {
+			return 0, fmt.Errorf("На ноль делить нельзя")
+		}
+		return a / b, nil
+	default:
+		return 0, fmt.Errorf("неизвестный оператор: %s", operator)
+	}
+}
+
+func readNumber(prompt string) (float64, error) {
+	var input string
 	for {
-
-		var a int
-		var b int
-		var op string
-		var result float64
-		var input string
-
-		fmt.Println("Это калькулятор")
-		fmt.Println("Пока он может выполнять только простейшие функции")
-		time.Sleep(1000 * time.Millisecond)
-		fmt.Println("Если захотите выйти - введите exit вместо числа")
-		fmt.Println("Можем начинать!")
-		fmt.Println("-----------------")
-		time.Sleep(1000 * time.Millisecond)
-		fmt.Println("Введите первое число:")
+		fmt.Println(prompt)
 		fmt.Scanln(&input)
 
 		if input == "exit" {
-			break
+			return 0, fmt.Errorf("exit")
 		}
 
-		a, err := strconv.Atoi(input)
+		num, err := strconv.ParseFloat(input, 64)
 		if err != nil {
-			fmt.Println("Введите целое число!")
-			break
+			fmt.Printf("некорректный ввод: %s\n", input)
+			continue
 		}
 
-		for {
-			fmt.Println("выберите действие(+, -, * или /)")
-			fmt.Scanln(&op)
+		return num, nil
+	}
+}
 
-			if op == "exit" {
-				return
-			}
-
-			if op != "+" && op != "-" && op != "*" && op != "/" {
-				fmt.Println("Неверный знак. Выберите из +, -, *, /")
-				continue
-			}
-			break
-		}
-
-		fmt.Println("Введите второе число:")
+func readOperator(prompt string) (string, error) {
+	var input string
+	for {
+		fmt.Println(prompt)
 		fmt.Scanln(&input)
 
 		if input == "exit" {
-			continue
+			return "", fmt.Errorf("exit")
 		}
 
-		b, err = strconv.Atoi(input)
-		if err != nil {
-			fmt.Println("Введите целое число!")
-			continue
+		if input == "+" || input == "-" || input == "*" || input == "/" {
+			return input, nil
 		}
-
-		switch op {
-		case "+":
-			result = float64(a + b)
-		case "-":
-			result = float64(a - b)
-		case "*":
-			result = float64(a * b)
-		case "/":
-			if b == 0 {
-				fmt.Println("На 0 делить нельзя")
-				continue
-			}
-			result = float64(a) / float64(b)
-		}
-		fmt.Printf("Ответ: %.2f\n", result)
-		fmt.Println("-----------------")
-
-		continue
+		fmt.Println("Неверный знак. Выберите из +, -, *, /")
 	}
 
 }
